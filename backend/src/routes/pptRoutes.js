@@ -1,5 +1,5 @@
 import express from 'express';
-import PptxGenJS from 'pptxgenjs/dist/pptxgen.cjs.js';
+import PptxGenJS from 'pptxgenjs';
 import { prisma } from '../index.js';
 import fs from 'fs';
 import path from 'path';
@@ -11,13 +11,15 @@ const __dirname = path.dirname(__filename);
 
 const router = express.Router();
 
-// Ensure temp directory exists (using system temp directory in Vercel production)
-const tempDir = process.env.NODE_ENV === 'production' 
-  ? os.tmpdir() 
-  : path.join(__dirname, '../../temp');
-
-if (!fs.existsSync(tempDir)) {
-  fs.mkdirSync(tempDir, { recursive: true });
+// Use /tmp for temp files (required for Vercel's read-only filesystem)
+let tempDir = os.tmpdir();
+try {
+  const localTemp = path.join(__dirname, '../../temp');
+  if (fs.existsSync(localTemp)) {
+    tempDir = localTemp;
+  }
+} catch (e) {
+  // Ignore - use os.tmpdir()
 }
 
 // ---------- PROJECTS ----------
