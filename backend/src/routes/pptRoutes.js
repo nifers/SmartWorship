@@ -1,5 +1,5 @@
 import express from 'express';
-import PptxGenJS from 'pptxgenjs';
+import PptxGenJS from 'pptxgenjs/dist/pptxgen.cjs.js';
 import { prisma } from '../index.js';
 import fs from 'fs';
 import path from 'path';
